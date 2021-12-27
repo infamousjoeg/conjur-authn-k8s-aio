@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Secretless Broker Docker image
+      run: docker build --target secretless-broker . --file Dockerfile --tag secretless-broker:v1.7.8
+    - name: Build the Conjur Authn-K8s Client Docker image
+      run: docker build --target authenticator-client . --file Dockerfile --tag conjur-authn-k8s-client:v0.22.0
+    - name: Build the Secretless Broker Docker image
+      run: docker build --target secrets-provider . --file Dockerfile --tag secrets-provider-for-k8s:v1.2.0

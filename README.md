@@ -25,7 +25,7 @@ docker build --target secretless-broker -t cyberark/secretless-broker:v1.7.8 .
 ### Build Conjur Authn-K8s Client
 
 ```shell
-docker build --target authenticator-client -t cyberark/conjur-authn-k8s-client:v.0.22.0 .
+docker build --target authenticator-client -t cyberark/conjur-authn-k8s-client:v0.22.0 .
 ```
 
 ### Build Secrets Provider for K8s

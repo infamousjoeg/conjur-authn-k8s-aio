@@ -1,0 +1,12 @@
+The Application Namespace preparation is complete.
+The following have been deployed:
+{{ if .Values.conjurConfigMap.create -}}
+- Conjur Connection Configmap
+{{ end -}}
+{{ if .Values.authnRoleBinding.create -}}
+- Authenticator Rolebinding
+{{ end -}}
+{{ if .Values.test.authentication.enable -}}
+- Helm test Pod
+- Helm test ConfigMap
+{{ end }}

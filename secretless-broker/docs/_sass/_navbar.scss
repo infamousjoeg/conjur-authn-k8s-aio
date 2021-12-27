@@ -1,0 +1,371 @@
+// ***********************
+// Navbar
+// this file contains styling for both top navbar and sidenav for docs page
+// ***********************
+
+#top-navigation {
+	background-image: url("../img/slss_bg_pattern_2.svg");
+	background-repeat: repeat-y;
+	background-size: 1200px auto;
+	border-radius: 0;
+	margin: 0;
+}
+
+#top-navigation.home {
+	background: none;
+}
+
+.navbar {
+	background-image: url("../img/slss_bg_pattern_2.svg");
+	background-color: $sless-dark-blue;
+	background-size: 1200px auto;
+	border-radius: 0;
+	margin: 0;
+	min-height: 6.5rem;
+	margin-bottom: 4rem;
+	.container {
+		padding: 0;
+	}
+	&.home {
+		.navbar-brand {
+			visibility: hidden;
+		}
+		.s-badge {
+			margin-left: -150px;
+		}
+		.dropdown-menu {
+			background-color: $sless-blue;
+			border-radius: $border-radius;
+			left: -5rem;
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+		}
+	}
+}
+
+.arrow_box {
+	position: relative;
+	background: #4D8FCC;
+}
+.arrow_box:after {
+	bottom: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(77, 143, 204, 0);
+	border-bottom-color: #4D8FCC;
+	border-width: 1rem;
+	margin-left: -1rem;
+}
+
+.icon-bar {
+	background-color: $sless-blue;
+	display: block;
+	width: 2.2rem;
+	height: .2rem;
+	border-radius: .1rem;
+	margin-top: .4rem;
+}
+
+.navbar-brand {
+	color: #fff;
+	min-height: 6.5rem;
+	margin-right: 4rem;
+	background-image: url("../img/secretless_4c_ko_horiz.svg");
+	width: 15rem;
+	text-indent: -999rem;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position-y: center;
+}
+
+.navbar-nav {
+	.dropdown-menu {
+		width: 100%;
+		.top-drop {
+			border-bottom: .1rem solid #ffffff1a;
+			&:last-of-type {
+				border-bottom: none;
+			}
+		}
+	}
+}
+
+.navbar-nav li {
+	font-size: 1.4rem;
+	font-weight: 100;
+	//height: 6.5rem;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	color: #fff;
+	padding: .8rem 1rem;
+	&.top-drop a {
+		color: #fff;
+	}
+	&.top-sub.active > a {
+		color: $sless-blue;
+	}
+	&.top-drop.active > a {
+		color: $sless-blue;
+	}
+	.dropdown-menu li a {
+		color: #fff;
+	}
+}
+
+.dropdown.top-sub:focus, .dropdown.top-sub a:focus {
+	outline: none;
+}
+
+@media (max-width: 991px) {
+
+	.navbar-nav {
+		.dropdown-menu {
+			background-color: $sless-blue;
+			border-radius: $border-radius;
+			li {
+				transition: all 0.4s;
+				&:hover {
+					background-color: darken($sless-blue, 10);
+					a {
+						color: #fff;
+					}
+				}
+			}
+		}
+		li {
+			flex-direction: column;
+		}
+	}
+
+	.arrow_box:after {
+		display: none;
+	}
+	
+}
+
+
+.navbar-nav a {
+	color: lighten($sless-light-blue, 05);
+	font-size: 1.5rem;
+	font-weight: 500;
+	transition: all 0.4s;
+	letter-spacing: .05rem;
+	width: 100%;
+	&:hover {
+		text-decoration: none;
+		color: $sless-blue;
+	}
+}
+
+.dropdown-menu {
+	background-color: $sless-dark-blue;
+	min-width: 16rem;
+	border-radius: 0 0 .4rem .4rem;
+	margin: 0;
+	border: 0;
+	box-shadow: 0 .6rem 1.2rem rgba(0, 0, 0, 0.175);
+	li {
+		height: 5rem;
+	}
+}
+
+// *********************
+// Side Navigation
+
+#side-navigation {
+	border-radius: .4rem;
+	justify-content: center;
+	flex-direction: column;
+	margin-bottom: 8rem;
+	h3 {
+		&.active {
+			a {
+				color: darken($sless-blue, 30);
+			}
+		}
+		a{
+			color: $sless-blue;
+		}
+	}
+	a {
+		color: $sless-text;
+		transition: all 0.4s;
+		&:hover {
+			color: $sless-blue;
+			text-decoration: none;
+		}
+	}
+	ul {
+		list-style-type: none;
+		padding: 0;
+		li {
+			font-weight: 300;
+			&.active {
+				a {
+					font-weight: 800;
+				}
+			}
+			&.active.section {
+				font-weight: 800;
+			}
+			&.active.entry {
+				font-weight: 800;
+			}
+		}
+	}
+
+	.list-link {
+		font-family: $sless-font-secondary;
+		width: 100%;
+		padding: 1rem 0 0 2.5rem ;
+
+	}
+
+	.sidenav-group {
+		background-color: lighten($sless-light-blue, 02);
+		padding: 2rem 0;
+		border-radius: $border-radius;
+		:nth-child(1) {
+			border-top: none;
+			padding-top: 0;
+		 }
+		 :last-child {
+			margin-bottom: 0;
+		 }
+		 h3 {
+				padding: 2rem 2.5rem .5rem 2.5rem;
+				color: $sless-blue;
+				border-top: .1rem solid darken($sless-light-blue, 10);
+				font-weight: 800;
+				font-size: 1.6rem;
+				a:hover {
+					color: darken($sless-blue, 20);
+				}
+		 }
+	}
+
+	.sidenav-list {
+		font-weight: 800;
+		margin: .5rem 0;
+		border-top: .1rem solid darken($sless-light-blue, 10);
+	}
+	.group-of-sections {
+		font-weight: 500;
+    	padding: 0px 2.5rem;
+	}
+
+	.sidenav-sublist {
+    	padding: 0rem 2.5rem;
+	}
+
+	.sidenav-subsublist {
+		padding: .6rem 0;
+	}
+
+	.sidenav-subsublist li{
+		margin-left: 1rem;
+		i {
+			margin-right: .5rem;
+			font-size: 1.3rem;
+			color: $sless-blue;
+		}
+	}
+}
+
+#cybr-nav {
+	width: 100%;
+	margin-bottom: 0;
+	height: 6.5rem;
+	background: transparent;
+}
+
+.navbar-list li {
+	font-size: 1.4rem;
+	font-weight: 100;
+}
+.navbar-list a {
+	color: lighten($sless-light-blue, 05);
+	padding: .8rem 1rem;
+	font-size: 1.5rem;
+	font-weight: 500;
+	transition: all 0.4s;
+	letter-spacing: .1rem;
+	&:hover {
+		text-decoration: none;
+		color: $sless-blue;
+	}
+}
+
+.sidenav-item {
+	list-style-type: none;
+	margin: 0 0 .2rem 0;
+	font-size: 1.5rem;
+	font-weight: 800;
+}
+
+.fixed-nav {
+	position: fixed;
+	top: 0;
+	margin-right: 10.0rem;
+}
+.fixed-nav-documentation {
+	position: relative;
+	left: 21.5rem;
+}
+
+.sidenav-item:hover a:hover {
+	text-decoration: none;
+}
+
+.navbar-list > ul {
+	display: flex;
+	list-style: none;
+	justify-content: flex-end;
+	letter-spacing: .2rem;
+}
+
+.navbar-list > ul > li {
+	margin: 1.0rem;
+}
+
+.navbar .default {
+	margin-bottom: 0;
+}
+
+ /* default class and toggled when user selects down caret for side navbar*/
+.dropdown-menu-option {
+    display: none;
+    padding-left: .8rem;
+    border-top: .1rem solid darken($sless-light-blue, 10);
+	display: none;
+	padding: 1rem 2.5rem;
+	margin: 0 -2.5rem;
+	background-color:darken($sless-light-blue, 02);
+}
+
+.dropdown-btn {
+	i {
+		float: right;
+	    color: #4d8fcc;
+	    margin-top: .6rem;
+	}
+}
+
+.rotatingArrow {
+  transform: rotate(90deg);
+}
+
+.arrow {
+	 transition: all 0.4s;
+}
+
+/* Keeps side navbar open */
+.navbar-open {
+	display: block;	
+}

@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  # Run once daily at 12 AM UTC, 8 PM EST
+  schedule:
+    - cron: '0 0 * * *'
+
+  # Run this on pushes to any branch
+  push:
+
+jobs:
+  unit_test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Unit tests
+        run: ./bin/test_unit
+
+  build_and_test:
+    name: Build and Functional Tests on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Build
+        run: ./bin/build
+      - name: Integration tests
+        run: ./bin/test
+
+  osx_test:
+    name: Functional Tests on macOS
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      # Cache go module dependencies based on go.sum to improve workflow execution time.
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      # Uninstall old go
+      - run: brew uninstall go@1.15
+      # Install go1.16
+      - run: brew install go@1.16
+      # Add go1.16 to PATH
+      - run: echo "/usr/local/opt/go@1.16/bin" >> $GITHUB_PATH
+      # Get go version
+      - run: go version
+      # Fix go1.16 module bug (https://github.com/golang/go/issues/44129#issuecomment-865249631)
+      - run: go env -w GOFLAGS=-mod=mod
+      # Download go modules
+      - run: go mod download
+      # Run keychain tests
+      - run: cd test/providers/keychain && ./start && ./test && ./stop

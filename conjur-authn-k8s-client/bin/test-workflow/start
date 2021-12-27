@@ -1,0 +1,178 @@
+#!/bin/bash
+
+set -eo pipefail
+cd "$(dirname "$0")" || ( echo "cannot cd into dir" && exit 1 )
+
+source ./utils.sh
+do_cleanup=true
+
+function print_help {
+  cat << EOF
+Runs the end-to-end workflow for testing Conjur Kubernetes authentication.
+By default, the workflow is run against Conjur Open Source, but can be run
+against Conjur Enterprise.
+
+Usage: ./start [options]:
+
+    -e, --enterprise          Run the E2E workflow against Conjur Enterprise
+    -p, --platform <pform>    Platform on which to deploy Conjur
+                              For Open Source workflow:
+                                - Defaults to 'kind'
+                                - Supports 'openshift'
+                              For Enterprise workflow:
+                                - Defaults to 'gke'
+                                - Supports 'jenkins'
+                              All other selections are rejected
+    -a, --apps <app>[,<app>]  Specify which test apps to install
+                              Multiple apps should be specified as a single comma-delimited string
+                              Excluding this flag runs all supported apps
+                              Currently supports:
+                                - summon-sidecar
+                                - secretless-broker
+                                - secrets-provider-standalone
+    -n, --nocleanup           Do not run the cleanup scripts, all resources are maintained.
+                              All other selections are rejected
+    -h, --help                Show the help message
+EOF
+  exit
+}
+
+function cleanup {
+  if [ "$do_cleanup" = "true" ] ; then
+    announce "Removing test environment"
+    ./stop
+  fi
+}
+
+declare -a supported_apps=("summon-sidecar" "secretless-broker" "secrets-provider-standalone" "secrets-provider-init")
+# Default: Test all applications
+declare -a install_apps=("${supported_apps[@]}")
+
+while true; do
+  case "$1" in
+    -a|--apps )
+      declare -a apps=($(split_on_comma_delimiter "$2"))
+      for app in "${apps[@]}"; do
+        if [[ ! " ${supported_apps[@]} " =~ " $app " ]]; then
+          echo "$app is not a supported test app!"
+          echo "Supported test apps include:"
+          echo "  - summon-sidecar"
+          echo "  - secretless-broker"
+          echo "  - secrets-provider-init"
+          exit 1
+        fi
+      done
+      install_apps=("${apps[@]}")
+      shift
+      shift
+      ;;
+    -e|--enterprise )
+      CONJUR_OSS_HELM_INSTALLED="false"
+      shift
+      ;;
+    -p|--platform )
+      CONJUR_PLATFORM="$2"
+      shift
+      shift
+      ;;
+    -n|--nocleanup )
+      do_cleanup="false"
+      shift
+      ;;
+    -h|--help )
+      print_help
+      shift
+      ;;
+    * )
+      if [ -z "$1" ]; then
+        break
+      else
+        echo "$1 is not a valid option"
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+# Bash arrays cannot be exported to the environment for use between scripts.
+# Here, export a version that complies with the bash environment,
+# and can be reassembled when it's needed
+export INSTALL_APPS=$(IFS=','; echo "${install_apps[*]}")
+
+export CONJUR_OSS_HELM_INSTALLED="${CONJUR_OSS_HELM_INSTALLED:-true}"
+export RUN_CLIENT_CONTAINER="${RUN_CLIENT_CONTAINER:-true}"
+
+if [[ "$CONJUR_OSS_HELM_INSTALLED" == "true" ]]; then
+  if [[ -z "$CONJUR_PLATFORM" ]]; then
+    CONJUR_PLATFORM="kind"
+  elif [[ "$CONJUR_PLATFORM" != "kind" && "$CONJUR_PLATFORM" != "openshift" ]]; then
+    echo "Conjur Open Source workflow not compatible with platform \"$CONJUR_PLATFORM\""
+    echo "Workflow currently only compatible with \"kind\" or \"openshift\""
+    exit
+  fi
+else
+  if [[ -z "$CONJUR_PLATFORM" ]]; then
+    CONJUR_PLATFORM="gke"
+  elif [[ "$CONJUR_PLATFORM" != "gke" && "$CONJUR_PLATFORM" != "jenkins" ]]; then
+    echo "Conjur Enterprise workflow not compatible with platform \"$CONJUR_PLATFORM\""
+    echo "Accepts \"gke\" and \"jenkins\""
+    exit
+  fi
+fi
+
+if [[ -z "$APP_PLATFORM" ]]; then
+  APP_PLATFORM="$CONJUR_PLATFORM"
+  if [[ "$CONJUR_PLATFORM" == "jenkins" ]]; then
+    APP_PLATFORM="openshift"
+  fi
+fi
+
+export CONJUR_PLATFORM
+export APP_PLATFORM
+
+trap cleanup EXIT
+
+conjur_init="
+source ./0_prep_env.sh
+./1_deploy_conjur.sh"
+
+conjur_prep="
+./2_admin_load_conjur_policies.sh &&
+./3_admin_init_conjur_cert_authority.sh"
+
+cluster_prep="./4_admin_cluster_prep.sh"
+
+test_app_workflow="
+./5_app_namespace_prep.sh &&
+./6_app_deploy_backend.sh &&
+./7_app_deploy.sh &&
+./8_app_verify_authentication.sh"
+
+if [[ "$CONJUR_OSS_HELM_INSTALLED" == "true" ]]; then
+  if [[ "$CONJUR_PLATFORM" == "openshift" && "$RUN_CLIENT_CONTAINER" == "true" ]]; then
+    source "./0_prep_env.sh"
+    run_command_with_platform "./1_deploy_conjur.sh"
+    run_command_with_platform "$conjur_prep"
+    run_command_with_platform "$cluster_prep"
+    run_command_with_platform "$test_app_workflow"
+  else
+    if [[ "$CONJUR_PLATFORM" == "openshift" ]]; then
+      ./platform_login.sh
+    fi
+    eval "$conjur_init"
+    eval "$conjur_prep"
+    eval "$cluster_prep"
+    eval "$test_app_workflow"
+  fi
+elif [[ "$CONJUR_PLATFORM" == "gke" ]]; then
+  eval "$conjur_init"
+  run_command_with_platform "$conjur_prep"
+  run_command_with_platform "$cluster_prep"
+  run_command_with_platform "$test_app_workflow"
+elif [[ "$CONJUR_PLATFORM" == "jenkins" ]]; then
+  eval "$conjur_init"
+  eval "$conjur_prep"
+  run_command_with_platform "$cluster_prep"
+  ./conjur_outside_k8s_vars.sh
+  run_command_with_platform "$test_app_workflow"
+fi

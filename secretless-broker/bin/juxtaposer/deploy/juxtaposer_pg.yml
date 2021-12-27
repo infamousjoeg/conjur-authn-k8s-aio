@@ -1,0 +1,37 @@
+---
+driver: postgres
+
+comparison:
+  baselineBackend: pg_direct
+#  recreateConnections: true
+  rounds: 10000
+  silent: false
+  threads: 1
+
+formatters:
+  json:
+    outputFile: ./results.json
+  stdout:
+
+backends:
+  pg_direct:
+    host: REPLACEME
+    port: 5432
+    username: REPLACEME
+    password: REPLACEME
+    database: secretless_xa
+
+  pg_secretless_tcp:
+    host: localhost
+    port: 15432
+    database: secretless
+    username: foo
+    password: foo
+    sslmode: disable
+
+  pg_secretless_socket:
+    host: /sock
+    database: secretless
+    username: foo
+    password: foo
+    sslmode: disable

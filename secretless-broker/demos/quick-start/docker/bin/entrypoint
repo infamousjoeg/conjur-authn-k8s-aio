@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+trap "exit 0" INT
+
+# Initialize postgres secrets
+export QUICKSTART_USERNAME="secretless"
+
+QUICKSTART_PASSWORD="$(openssl rand -hex 8)"
+export QUICKSTART_PASSWORD
+
+POSTGRES_PASSWORD="$(openssl rand -hex 8)"
+export POSTGRES_PASSWORD
+
+## Initialize SSH secrets
+ssh-keygen -b 2048 -f /tmp/id_rsa -N ''
+chown secretless /tmp/id_rsa
+mv /tmp/id_rsa.pub /home/user/.ssh/authorized_keys
+
+SSH_PRIVATE_KEY="$(cat /tmp/id_rsa)"
+export SSH_PRIVATE_KEY
+
+## Initialize nginx secrets (for HTTP auth)
+export BASIC_AUTH_USERNAME="user"
+
+BASIC_AUTH_PASSWORD="$(openssl rand -hex 16)"
+export BASIC_AUTH_PASSWORD
+
+htpasswd \
+  -cbd /etc/nginx/.htpasswd \
+  "${BASIC_AUTH_USERNAME}" \
+  "${BASIC_AUTH_PASSWORD}"
+
+# Start services
+/usr/sbin/nginx
+/usr/sbin/sshd
+su -c 'secretless-broker -f /etc/secretless.yml' secretless &
+su -c '/docker-entrypoint.sh postgres -c ssl=on -c ssl_cert_file=/var/lib/postgresql/server.crt -c ssl_key_file=/var/lib/postgresql/server.key' postgres &
+wait

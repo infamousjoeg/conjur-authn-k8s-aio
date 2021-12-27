@@ -1,0 +1,15 @@
+# VIM swapfiles
+*.sw[po]
+
+test
+
+temp
+
+helm/conjur-config-cluster-prep/files/conjur-cert.pem
+helm/conjur-app-deploy/charts/app-secrets-provider-standalone/Chart.lock
+helm/conjur-app-deploy/charts/app-secrets-provider-standalone/charts/secrets-provider-*.tgz
+
+bin/test-workflow/policy/generated/*
+tmp.*
+bin/test-workflow/output/
+bin/test-workflow/bash-lib/

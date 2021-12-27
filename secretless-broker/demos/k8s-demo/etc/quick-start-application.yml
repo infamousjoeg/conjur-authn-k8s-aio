@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quick-start-application
+  labels:
+    app: quick-start-application
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: quick-start-application
+  template:
+    metadata:
+      labels:
+        app: quick-start-application
+    spec:
+      serviceAccountName: quick-start-application
+      containers:
+      - name: quick-start-application
+        image: cyberark/demo-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_URL
+          value: postgresql://localhost:5432/quick_start_db?sslmode=disable
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 5
+      - name: secretless
+        image: cyberark/secretless-broker:latest
+        imagePullPolicy: Always
+        args: ["-f", "/etc/secretless/secretless.yml"]
+        volumeMounts:
+        - name: config
+          mountPath: /etc/secretless
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: quick-start-application-secretless-config
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: quick-start-application
+spec:
+  selector:
+    app: quick-start-application
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: LoadBalancer

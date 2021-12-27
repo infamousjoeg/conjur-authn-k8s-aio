@@ -1,0 +1,84 @@
+#!/bin/bash
+
+set -eo pipefail
+
+CURRENT_DIR=$("$(dirname "$0")/abspath")
+TOPLEVEL_DIR="$CURRENT_DIR/.."
+
+DOCS_DIR="$TOPLEVEL_DIR/docs"
+DEST_SITE_DIR="$DOCS_DIR/_site"
+REPOSITORY="github.com/cyberark/secretless-broker"
+
+IMAGE_NAME="secretless-website-builder"
+CONTAINER_NAME="secretless-website-builder-$(date -u +%Y%m%d_%H%M%S)"
+
+echo "Using container name: ${CONTAINER_NAME}"
+
+docker build -f "${CURRENT_DIR}/Dockerfile.website" \
+             -t "${IMAGE_NAME}" \
+             "${TOPLEVEL_DIR}/docs"
+
+echo "Cleaning up current _site..."
+rm -rf "${DEST_SITE_DIR}"
+mkdir -p "${DEST_SITE_DIR}"
+
+echo "Cleaning up generated files..."
+rm -rf "$DOCS_DIR"/generated/*.html
+
+echo "Reading and generating godoc pages..."
+while read -r package; do
+  # Note: "${package:?}" instead of "${package}" to avoid shellcheck 2154
+  #        This ? version will throw an error if package isn't defined.
+  if [[ "${package:?}" =~ ^\#.* ]] || [[ -z "${package}" ]]; then
+    continue
+  fi
+
+  sanitized_package_name="${package//\//_}"
+  package_file="${sanitized_package_name//\//_}.html"
+  output_file="$DOCS_DIR/generated/${package_file}"
+  echo "Creating: $output_file"
+
+  echo "---
+layout: subpages
+id: ${sanitized_package_name}
+title: Plugin Reference
+description: Secretless Broker Documentation
+godoc: True
+godoc_repository: ${REPOSITORY}
+godoc_package: ${package}
+---
+
+<h3>Package import</h3>
+<div data-proofer-ignore>
+" > "${output_file}"
+  set -x
+
+  # Generate the doc but strip out the header boilerplate and links
+  docker run --rm \
+             -t \
+             -v "${TOPLEVEL_DIR}:/go/src/${REPOSITORY}" \
+             golang:1.11.4-stretch godoc -html \
+                                   -links=false \
+                                   "/go/src/${REPOSITORY}/${package}" | sed 1,19d >> "${output_file}"
+
+  # Sanity check that godoc actually generated something
+  if [[ "$(tail -2 "${output_file}")" =~ .*Package\ import.* ]]; then
+    echo "ERROR: Output file '${output_file}' was empty!"
+    exit 1
+  fi
+
+  printf '\n%s\n' '</div>' >> "${output_file}"
+done < "$DOCS_DIR/godoc_packages.txt"
+
+echo "Finished generating godoc pages."
+
+echo "Building..."
+docker run --rm \
+           --name "${CONTAINER_NAME}" \
+           -w /usr/src/app \
+           --network none \
+           -v "$TOPLEVEL_DIR/docs:/usr/src/app" \
+           -v "${DEST_SITE_DIR}:/tmp/_site" \
+           "${IMAGE_NAME}"
+
+echo "Done!"

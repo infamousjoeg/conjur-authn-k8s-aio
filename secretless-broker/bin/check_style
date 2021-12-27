@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+# This runs golint using the same settings that will be used by hosted Code
+# Climate in our CI pipeline
+#
+# See:
+#     https://github.com/codeclimate/codeclimate#usage
+docker run \
+  --interactive --tty --rm \
+  --env CODECLIMATE_CODE="$PWD" \
+  --volume "$PWD":/code \
+  --volume /var/run/docker.sock:/var/run/docker.sock \
+  --volume /tmp/cc:/tmp/cc \
+  codeclimate/codeclimate analyze -e golint .codeclimate.yml

@@ -1,0 +1,25 @@
+version: '3.0'
+
+services:
+  secretless:
+    build:
+      context: ../../../..
+    entrypoint: "/usr/local/bin/secretless-broker -debug"
+    environment:
+      SECRETLESS_HTTP_CA_BUNDLE: /secretless/test/connector/http/generic/certs/server-cert-included.pem
+    volumes:
+      - ./secretless.yml:/secretless.yml
+      - ../../../..:/secretless
+
+  test:
+    image: secretless-dev
+    entrypoint: sleep infinity
+    volumes:
+      - ../../../..:/secretless
+    depends_on:
+      - secretless
+
+  dev:
+    image: secretless-dev
+    volumes:
+      - ../../../..:/secretless

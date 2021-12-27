@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -eo pipefail
+
+cd "$(dirname "$0")/.." || ( echo "cannot cd into parent dir" && exit 1 )
+
+function pushd() {
+    command pushd "$@" > /dev/null
+}
+
+function popd() {
+    command popd "$@" > /dev/null
+}
+
+pushd helm
+    declare -a prep_charts=("conjur-config-cluster-prep"
+                            "conjur-config-namespace-prep")
+    for chart in "${prep_charts[@]}"; do
+        pushd "$chart"
+            ./test-lint
+            ./test-schema
+            ./test-unit
+        popd
+    done
+
+    pushd conjur-app-deploy
+        ./test-lint
+
+        declare -a subcharts=("app-summon-sidecar"
+                              "app-secretless-broker"
+                              "app-secrets-provider-init"
+                              "app-secrets-provider-standalone")
+        for subchart in "${subcharts[@]}"; do
+            pushd charts/"$subchart"
+                ./test-schema
+                ./test-unit
+            popd
+        done
+
+    popd
+popd

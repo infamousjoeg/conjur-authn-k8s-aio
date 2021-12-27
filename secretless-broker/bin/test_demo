@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -eo pipefail
+
+CURRENT_DIR=$("$(dirname "$0")"/abspath)
+TOPLEVEL_DIR="$CURRENT_DIR/.."
+QUICK_START_DIR="${TOPLEVEL_DIR}/demos/quick-start"
+COMPOSE_PROJECT_NAME="$(openssl rand -hex 3)"
+
+export COMPOSE_PROJECT_NAME
+
+pushd "$QUICK_START_DIR" >/dev/null
+
+cleanup() {
+  ./bin/stop || true
+  popd >/dev/null
+}
+trap cleanup EXIT ABRT QUIT
+
+echo "Starting Quick Start demo tests..."
+set +e
+  ./bin/test
+  exit_status=$?
+set -e
+
+if [[ $exit_status -ne 0 ]]; then
+  echo "FAIL: Quick Start demo exited with an error (exit code $exit_status)!"
+  exit 1
+fi
+
+echo "PASS: Quick Start tests were successful!"

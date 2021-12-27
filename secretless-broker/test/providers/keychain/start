@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Clear out previously store secrets from keychain
+./stop

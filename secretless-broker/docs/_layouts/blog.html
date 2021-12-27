@@ -1,0 +1,23 @@
+---
+layout: subpages
+---
+
+<ul class="posts">
+  {% for post in site.posts %}
+    {% if post.published %}
+      <a class="post" href="{{ post.url }}"><li>
+        {% if post.image %}
+          <img class="post-list-thumb" src="{{ base.url }}/img/blog/{{ post.thumb }}" alt="{{ post.image-alt }}">
+        {% endif %}
+        <div class="post-content">
+          <h2>{{ post.title }}</h2><span class="blog-subhead">{{ post.sub }}</span>
+          <p class="post-meta">{{ post.date | date: '%B %d, %Y' }} by {{ post.author }}</p>
+          <p class="excerpt">{{ post.excerpt | strip_html | truncatewords: 40 }}</p>
+        </div>
+      </li></a>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+<br />
+<br />

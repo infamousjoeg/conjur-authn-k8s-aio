@@ -1,0 +1,65 @@
+# Default values for the conjur-config-cluster-prep Helm chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+conjur:
+  account: "default"
+
+  # Conjur Appliance URL. (This is a required value).
+  # applianceUrl:
+
+  # Path to a Conjur certificate file. Either this value or
+  # 'certificateBase64' must be provided, but not both. Example:
+  # certificateFilePath: "files/conjur-cert.pem"
+  # certificateFilePath:
+
+  # Base64-encoded Conjur certificate file
+  # certificateBase64:
+
+authnK8s:
+  # Conjur authn-k8s authenticator ID to use for authentication.
+  # (This is a required value).
+  authenticatorID:
+
+  configMap:
+    create: true
+    name: "conjur-configmap"
+
+  clusterRole:
+    create: true
+
+    # The name of the authenticator ClusterRole to use or create.
+    #
+    # If 'authnK8s.clusterRole.create` is set to `true`, then this defaults to
+    # "conjur-clusterrole". If 'authnK8s.clusterRole.create` is set to `false`,
+    # then this is a required value. Example:
+    # name: conjur-clusterrole
+    # name:
+
+  serviceAccount:
+    create: true
+    # The name of the authenticator ServiceAccount to use or create.
+    #
+    # If 'authnK8s.serviceAccount.create` is set to `true`, then this defaults
+    # to "conjur-serviceaccount". If 'authnK8s.serviceAccount.create` is set
+    # to `false`, then this is a required value. Example:
+    # name: conjur-serviceaccount
+    # name:
+
+test:
+  # 'colorize' determines if test output should include color escape sequences
+  colorize: true
+  authentication:
+    # 'enable' indicates whether validation tests should include an attempt
+    # to authenticate with a Conjur instance using the Golden ConfigMap
+    # contents and a special "authentication-only" (no secrets access)
+    # validator Conjur host ID.
+    enable: false
+    # 'validatorID' indicates the Conjur host ID that should be used
+    # to test authentication with a Conjur instance. This host ID must be
+    # pre-configured for basic authentication in Conjur security policy.
+    # The authn-k8s sidecar will use a CONJUR_AUTHN_LOGIN value of:
+    #    host/conjur/authn-k8s/{{authenticatorID}}/{{validatorID}}
+    validatorID: "validator"
+    # 'debug' enables authenticator sidecar debug logs during testing
+    debug: true

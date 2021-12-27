@@ -1,0 +1,18 @@
+# Build settings
+title: Secretless
+markdown: kramdown
+highlighter: rouge
+
+is_maintenance_mode: false
+
+baseurl: ""
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+
+plugins:
+  - jekyll-feed
+  - jekyll-redirect-from
+
+liquid:
+  error_mode:       strict
+  strict_filters:   true
+  strict_variables: false

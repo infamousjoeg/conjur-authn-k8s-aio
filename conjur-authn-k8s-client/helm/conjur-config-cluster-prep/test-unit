@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Runs a Helm unit test using the 'helm-unittest' Helm plugin.
+# Reference: https://github.com/quintush/helm-unittest/blob/master/DOCUMENT.md
+
+source ../common/utils.sh
+
+banner $BOLD "Running Helm unit tests for chart \"conjur-config-cluster-prep\""
+run_helm_unittest

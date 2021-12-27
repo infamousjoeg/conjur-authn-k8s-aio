@@ -1,0 +1,27 @@
+#!/bin/bash
+
+mssql_host=mssql
+while getopts :m: opt; do
+    case $opt in
+        m) mssql_host=${OPTARG};;
+       \?) echo "Unknown option -$OPTARG"; exit 1;;
+    esac
+done
+
+mssql_is_up() {
+    docker-compose logs $mssql_host | grep "SQL Server is now ready for client connections"
+}
+
+# TODO: Use bash-lib for this function once it is implemented there
+max_tries=300
+cnt=0
+until mssql_is_up || (( cnt == max_tries )); do
+  (( cnt++ ))
+  sleep 1
+done
+
+timed_out=$(( cnt == max_tries ))
+if [[ $timed_out -eq 1 ]]; then
+  echo "MSSQL Server failed to start"
+  exit 1
+fi

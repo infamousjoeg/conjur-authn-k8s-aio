@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+# Env vars
+. ./app_constants.sh
+
+# Note: In future versions of k8s we'll be able to replace this code
+# with the k8s "wait" command:
+# https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#wait
+delete_ns() {
+  echo "Deleting namespace '$1'..."
+  kubectl delete --wait=true --ignore-not-found=true namespace "$1"
+}
+
+delete_ns "$BACKEND_NAMESPACE"
+delete_ns "$APP_NAMESPACE"
+
+echo "Namespaces cleared"

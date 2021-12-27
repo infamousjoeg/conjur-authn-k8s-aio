@@ -1,0 +1,31 @@
+---
+driver: mysql-5.7
+
+comparison:
+  baselineBackend: mysql_direct
+#  recreateConnections: true
+  rounds: 10000
+  threads: 1
+  silent: false
+
+formatters:
+  json:
+    outputFile: ./results.json
+  stdout:
+
+backends:
+  mysql_direct:
+    host: REPLACEME
+    port: 3306
+    username: REPLACEME
+    password: REPLACEME
+    database: secretless_xa
+
+  mysql_secretless_tcp:
+    host: localhost
+    port: 13306
+    database: secretless
+
+  mysql_secretless_socket:
+    host: /sock/mysql
+    database: secretless

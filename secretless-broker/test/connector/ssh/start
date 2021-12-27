@@ -1,0 +1,9 @@
+#!/bin/bash -ex
+
+./stop
+
+docker-compose build --pull
+
+docker-compose up -d secretless
+
+sleep 2

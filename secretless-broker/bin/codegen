@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+CURRENT_DIR=$("$(dirname "$0")/abspath")
+TOPLEVEL_DIR="$CURRENT_DIR/.."
+
+PROJECT_MODULE="github.com/cyberark/secretless-broker"
+IMAGE_NAME="secretless-codegen-builder"
+
+K8S_PKG_TAG="$(go list -m -f '{{ .Version }}' k8s.io/client-go)"
+
+echo "Building codegen Docker image..."
+docker build -f "${CURRENT_DIR}/Dockerfile.codegen" \
+             --build-arg K8S_PKG_TAG="${K8S_PKG_TAG}" \
+             -t "${IMAGE_NAME}" \
+             "${TOPLEVEL_DIR}"
+
+echo "Pre-cleaning..."
+docker run --rm \
+           -v "${TOPLEVEL_DIR}:/secretless" \
+           "${IMAGE_NAME}" /bin/bash -c "rm -rf github.com"
+
+runner_cmd="/code-generator/generate-groups.sh all \
+  $PROJECT_MODULE/pkg/k8sclient \
+  $PROJECT_MODULE/pkg/apis \
+  secretless.io:v1 \
+  -h ./bin/codegen-utils/boilerplate.go.txt"
+
+echo "Generating API code and client (this may take a few minutes)..."
+docker run --rm \
+           -t \
+           -e GOPATH="" \
+           -v "${TOPLEVEL_DIR}:/secretless" \
+           "${IMAGE_NAME}" /bin/bash -c "$runner_cmd"
+
+echo "Moving the code in the right places..."
+cp -r "$TOPLEVEL_DIR/$PROJECT_MODULE/pkg" "$TOPLEVEL_DIR"
+
+echo "Removing temp files..."
+docker run --rm \
+           -v "${TOPLEVEL_DIR}:/secretless" \
+           "${IMAGE_NAME}" /bin/bash -c "rm -rf github.com"
+
+echo "Code-gen done!"

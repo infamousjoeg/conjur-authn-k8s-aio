@@ -1,0 +1,28 @@
+{{- if .Values.conjurConfigMap.create }}
+# The Conjur Connection Configmap contains references to Conjur credentials,
+# taken from the "Golden Configmap". These can be used to enable Conjur
+# authentication for applications to retrieve secrets securely.
+{{ $config := required "Both authnK8s.namespace and authnK8s.configMap are required" .Values.authnK8s -}}
+
+{{ $g := .Values.test.mock -}}
+{{ if not .Values.test.mock.enable -}}
+{{ $g = (lookup "v1" "ConfigMap" .Values.authnK8s.namespace .Values.authnK8s.goldenConfigMap).data -}}
+{{ end -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.conjurConfigMap.name }}
+  labels:
+    app.kubernetes.io/name: "conjur-connect-configmap"
+    app.kubernetes.io/instance: "conjur-{{ .Release.Namespace }}-configmap"
+    app.kubernetes.io/part-of: "conjur-config"
+    conjur.org/name: "conjur-connect-configmap"
+data:
+  CONJUR_ACCOUNT: {{ get $g "conjurAccount" }}
+  CONJUR_APPLIANCE_URL: {{ get $g "conjurApplianceUrl" }}
+  CONJUR_AUTHN_URL: {{ printf "%s/authn-k8s/%s" (get $g "conjurApplianceUrl") (get $g "authnK8sAuthenticatorID") }}
+  CONJUR_SSL_CERTIFICATE: |- 
+{{ get $g "conjurSslCertificate" | indent 4 }}
+  CONJUR_AUTHENTICATOR_ID: {{ get $g "authnK8sAuthenticatorID" }}
+{{- end }}

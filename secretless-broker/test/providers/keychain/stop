@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+
+# Clear out previously store secrets from keychain
+go run ./...

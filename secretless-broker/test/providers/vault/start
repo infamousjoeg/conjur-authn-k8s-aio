@@ -1,0 +1,61 @@
+#!/bin/bash -ex
+
+./stop
+
+docker-compose build
+
+docker-compose up \
+  -d \
+  vault
+
+function wait_for_vault() {
+  for _ in $(seq 20); do
+    # curl for /v1/sys/health hangs
+    if ! docker-compose run --rm -T dev curl -s http://vault:8200 > /dev/null; then
+      echo .
+      sleep 2
+    else
+      break
+    fi
+  done
+
+  # Fail if the server isn't up yet
+  docker-compose run --rm -T dev curl -s http://vault:8200 > /dev/null
+}
+
+wait_for_vault
+
+root_token=$(docker-compose logs vault | grep "Root Token:" | tail -n 1 | awk '{print $NF}')
+
+function vault_cmd() {
+  docker-compose run --rm \
+    -T \
+    -e VAULT_ADDR=http://vault:8200 \
+    -e VAULT_TOKEN="$root_token" \
+    --entrypoint vault \
+    vault \
+    "$@"
+}
+
+vault_port="${vault_host_port##*:}"
+
+# Remove files from tmp but avoid recreating the folder to
+# avoid cache busting
+mkdir -p tmp
+rm -rf tmp/*
+
+cat <<ENV > .env
+VAULT_ADDR=http://localhost:$vault_port
+VAULT_TOKEN=$root_token
+ENV
+
+# cubbyhole enabled by default, mounted at /cubbyhole
+vault_cmd write cubbyhole/first-secret 'some-key=one'
+vault_cmd write cubbyhole/second-secret 'value=two'
+
+# KV v2 enabled by default, mounted at /secret
+vault_cmd secrets enable -version=1 kv
+vault_cmd kv put kv/db/password 'password=db-secret'
+vault_cmd kv put kv/frontend/admin-password 'password=frontend-secret'
+vault_cmd kv put kv/web/password 'value=web-secret'
+vault_cmd kv put secret/service 'api-key=service-api-key'

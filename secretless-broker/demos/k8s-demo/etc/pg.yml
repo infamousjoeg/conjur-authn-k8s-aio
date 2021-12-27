@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pg
+  labels:
+    app: quick-start-backend
+spec:
+  serviceName: quick-start-backend
+  selector:
+    matchLabels:
+      app: quick-start-backend
+  template:
+    metadata:
+      labels:
+        app: quick-start-backend
+    spec:
+      securityContext:
+        fsGroup: 999
+      containers:
+      - name: quick-start-backend
+        image: postgres:9.6
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 5432
+        env:
+          - name: POSTGRES_PASSWORD
+            value: admin_password
+        volumeMounts:
+        - name: backend-certs
+          mountPath: "/etc/certs/"
+          readOnly: true
+        args: ["-c", "ssl=on", "-c", "ssl_cert_file=/etc/certs/pg_server.crt", "-c", "ssl_key_file=/etc/certs/pg_server.key"]
+        readinessProbe:
+          exec:
+            command: ["psql", "-w", "-U", "postgres", "-c", "SELECT 1"]
+          initialDelaySeconds: 15
+          timeoutSeconds: 2
+      volumes:
+      - name: backend-certs
+        secret:
+          secretName: quick-start-backend-certs
+          defaultMode: 384
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: quick-start-backend
+spec:
+  selector:
+    app: quick-start-backend
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: LoadBalancer

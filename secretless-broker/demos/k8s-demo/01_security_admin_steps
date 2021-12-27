@@ -1,0 +1,113 @@
+#!/bin/bash -e
+
+./stop
+
+# Generic utilities
+. ./utils.sh
+
+# Generic variables about the environment
+. ./app_constants.sh
+
+# Secrets known only by the security admin exported as env variables
+. ./security_admin_secrets.sh
+
+
+##################################################
+step "Create a new namespace"
+
+kubectl create namespace "${BACKEND_NAMESPACE}"
+
+##################################################
+step "Add certificates to Kubernetes Secrets"
+
+# add pg certificates to kubernetes secrets
+kubectl --namespace "${BACKEND_NAMESPACE}" \
+  create secret generic \
+  quick-start-backend-certs \
+  --from-file "etc/pg_server.crt" \
+  --from-file "etc/pg_server.key"
+
+##################################################
+step "Create StatefulSet for Database"
+
+kubectl --namespace "${BACKEND_NAMESPACE}" apply \
+  --filename "etc/pg.yml"
+
+wait_for_app "quick-start-backend" "${BACKEND_NAMESPACE}"
+
+##################################################
+step "Create Application Database"
+
+# Note: the `psql` command requires the --stdin flag
+kubectl --namespace "${BACKEND_NAMESPACE}" \
+  exec --stdin "$(first_pod quick-start-backend "${BACKEND_NAMESPACE}")" \
+  -- \
+    psql --username "${DB_ADMIN_USER}" \
+    --command "CREATE DATABASE quick_start_db;"
+
+##################################################
+step "Create Database Table and Permissions"
+
+db_url="quick-start-backend.${BACKEND_NAMESPACE}.svc.cluster.local:5432"
+
+echo "Using DB endpoint: $db_url"
+
+kubectl run --rm -i \
+ --env PGPASSWORD="${DB_ADMIN_PASSWORD}" \
+ --generator=run-pod/v1 \
+ --namespace "${BACKEND_NAMESPACE}" \
+ --wait \
+ postgres-cli \
+ --image="postgres:9.6" -- \
+    psql \
+    --username "${DB_ADMIN_USER}" \
+    "postgres://$db_url" \
+    <<EOSQL
+/* Create Application User */
+CREATE USER ${DB_USER} PASSWORD '${DB_INITIAL_PASSWORD}';
+
+/* Create Table */
+CREATE TABLE pets (
+    id serial primary key,
+    name varchar(256)
+);
+
+/* Grant Permissions */
+GRANT SELECT, INSERT ON public.pets TO ${DB_USER};
+GRANT USAGE, SELECT ON SEQUENCE public.pets_id_seq TO ${DB_USER};
+EOSQL
+
+##################################################
+step "Store DB credentials in Kubernetes Secrets"
+
+# Note: We're creating a separate namespace for the app just to emphasize the
+# conceptual separation between the duties of the security admin and the app
+# developer
+kubectl create namespace "${APP_NAMESPACE}"
+
+# Store the credentials
+kubectl --namespace "${APP_NAMESPACE}" \
+  create secret generic "quick-start-backend-credentials" \
+  --from-literal address="${db_url}" \
+  --from-literal username="${DB_USER}" \
+  --from-literal password="${DB_INITIAL_PASSWORD}"
+
+##################################################
+step "Create Application Service Account"
+
+# create application service account
+kubectl --namespace "${APP_NAMESPACE}" \
+  create serviceaccount "quick-start-application"
+
+# grant "quick-start-application" service account in
+# "quick-start-application-ns" namespace access to
+# "quick-start-backend-credentials"
+kubectl --namespace "${APP_NAMESPACE}" \
+  create --filename "etc/quick-start-application-entitlements.yml"
+
+##################################################
+step "Create and Store Secretless Configuration"
+
+kubectl --namespace "${APP_NAMESPACE}" \
+  create configmap "quick-start-application-secretless-config" \
+  --from-file "etc/secretless.yml"

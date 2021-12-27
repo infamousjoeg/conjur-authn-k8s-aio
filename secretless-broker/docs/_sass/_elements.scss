@@ -1,0 +1,536 @@
+// ***********************
+// Headers
+// ***********************
+.docs-subheading {
+	font-size: 1.8rem;
+}
+.card-heading {
+	font-weight: bold;
+	line-height: 4.5rem;
+	font-family: $sless-font-secondary;
+	font-size: 3.3rem;
+	letter-spacing: .1rem;
+	color: #4d8fcc;
+}
+.broker {
+	font-family: $sless-font-primary;
+}
+.card-side-heading {
+	font-weight: bold;
+	font-family: $sless-font-secondary;
+	font-size: 2rem;
+	letter-spacing: .1rem;
+}
+.card-subheading {
+	font-size: 1.7rem;
+	font-weight: bold;
+}
+.jumbotron-sub-header {
+	font-weight: bold;
+	letter-spacing: .1rem;
+	font-size: 2.4rem;
+	font-family: $sless-font-secondary;
+}
+.jumbotron-sub {
+	h2 {
+		text-align: center;
+		color: #fff;
+		color: #fff;
+    margin-top: .4rem;
+	}
+	p {
+		text-align: center;
+		color: white;
+	}
+}
+.jumbotron-sub-description {
+	width: 53%;
+  margin: 0 auto;
+}
+
+// ***********************
+// Jumbotron
+// ***********************
+
+.s-badge {
+	background-color: #4d8fcc9c;
+	border-radius: .4rem;
+	color: #edf2f6c9;
+	font-size: 1.3rem;
+	font-weight: 800;
+	padding: .2rem .8rem;
+	i {
+		margin-right: .8rem;
+		color: $sless-dark-blue;
+	}
+	p {
+		margin: 0;
+	}
+}
+
+.center-block {
+	float: none;
+	display: block;
+	margin: 0 auto;
+	top: 1;
+	background-color: transparent;
+}
+#jumbotron-text {
+	font-size: 2.0rem;
+	text-align: center;
+	font-family: $sless-font-primary;
+	margin-top: 1rem;
+	color: #4d8fcc;
+}
+#jumbotron-heading {
+	font-size: 6.0rem;
+	text-align: center;
+	letter-spacing: .3rem;
+	margin-top: 2.0rem;
+	color: #fff;
+}
+.jumbotron-sub {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	background: linear-gradient(#165d9e, #4d8fcc);
+	padding: 2rem 0 3rem 0;
+}
+.jumbotron {
+	margin-bottom: 0;
+	margin-top: -11.5rem;
+	padding-top: 10.5rem;
+	background-image: url("../img/slss_bg_pattern_2.svg");
+	background-color: $sless-dark-blue;
+	background-size: 1200px auto;
+	text-align: center;
+	border-radius: 0;
+}
+
+// ***********************
+// Features
+// ***********************
+.about {
+	width: 1.0rem;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+}
+.about-subitem {
+	padding: .5rem .5rem .5rem .5rem;
+}
+.about-subitem .inner {
+	min-height: 31rem;
+	padding: 2.5rem;
+	margin: 0 1.0rem 3.0rem;
+	transition: .5s ease;
+	background: $sless-light-blue;
+}
+
+.inner {
+	i {
+		padding-top: .3rem;
+		transition: .5s ease;
+		color: $sless-blue;
+		margin-right: .8rem;
+    margin-left: -1.1rem;
+		&:hover {
+			transform: translateX(.2rem);
+		}
+	}
+	p {
+		margin-left: 1.5rem;
+	}
+	h3 {
+		margin-top: .7rem;
+	}
+	&:hover {
+		transform: scale(1.01);
+		i {
+			transform: translateX(.5rem);
+		}
+	}
+}
+.inner-text {
+	margin-left: 0;
+	font-size: 1.8rem;
+	font-weight: 800;
+	font-family: $sless-font-secondary;
+	line-height: 2.5rem;
+}
+.in-line-frame {
+	display: flex;
+}
+.card-features {
+	padding-top: 2.5rem;
+}
+
+// ***********************
+// Architecture
+// ***********************
+.arch-respons-box {
+	margin-bottom: 4.0rem;
+	display: flex;
+	align-items: center;
+	justify-content: center
+}
+.arch-respons {
+	margin: 0 6rem 0 0;
+}
+.arch {
+	margin-left: auto;
+	margin-right: auto;
+}
+.arch-list > li {
+	font-family: $sless-font-primary;
+}
+.slss-arch {
+	margin: 3rem 0;
+}
+
+.slss-arch-card {
+	margin: 2rem 0;
+}
+
+.arch-img {
+	padding: 0;
+	margin: 2rem 0 3rem 0;
+	height: 30rem;
+}
+
+.arch-callout {
+	font-size: 1.5rem;
+	color: #fff;
+	background-color: $sless-blue;
+	padding: 5px 13px;
+	border-radius: 6px;
+	margin-top: 4rem;
+}
+
+.docs-img {
+	max-width: 55rem;
+	margin: 4rem 0;
+	text-align: center;
+}
+
+@media (max-width: 767px) {
+	.arch-col-r {
+		border-top: 1px solid $sless-blue;
+		margin-top: 3rem;
+		padding-top: 2rem;
+	}
+	.arch-img {
+		height: 40rem;
+	}
+}
+
+@media (max-width: 991px) {
+	.arch-img {
+		width: 90%;
+	}
+}
+
+// ***********************
+// Get Started
+// ***********************
+.introduction {
+	margin: 0 auto;
+
+	a {
+		color: $sless-blue;
+	}
+}
+.container-fluid {
+}
+.tab-content {
+	display: none;
+}
+
+// ***********************
+// Documentation
+// ***********************
+
+.documentation-content {
+	padding-bottom: 10.0rem;
+	margin-left: 5.0rem;
+}
+.documentation {
+	display: grid;
+	margin: 0 auto;
+	grid-template-columns: 23rem 1fr;
+	grid-column-gap: 2rem;
+}
+.faq {
+	font-weight: bold;
+	font-size: 1.8rem;
+	padding: 1.0rem 0rem;
+}
+#faq-list {
+	padding: 1.0rem 1.0rem;
+}
+#faq-list a{
+	padding: .5rem 0rem;
+}
+
+// ***********************
+// Blog
+// ***********************
+.blog-img img {
+        max-width: 70rem;
+        margin: 4rem 0;
+        text-align: center;
+}
+
+// ***********************
+// Community
+// ***********************
+.community {
+	h2 {
+		margin-top: 0;
+	}
+	div {
+		margin-bottom: 4rem;
+	}
+}
+
+// ***********************
+// Icons
+// ***********************
+
+.far, .fas, .fab {
+	font-size: 1.5rem;
+	margin-right: 1.0rem;
+	color: #4d8fcc;
+}
+
+.slss-icon {
+	color: lighten($sless-text, 70);
+	font-size: 3rem;
+}
+
+// ***********************
+// Images
+// ***********************
+.jumbotron-img {
+	width: 20%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.secretless-logo {
+	width: 40rem;
+	margin-bottom: 2rem;
+
+}
+
+.ui-tabs {
+	margin: 3rem 0;
+	padding: 0;
+}
+
+// ******************
+// Tabs
+// ******************
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+	border: .1rem solid $sless-blue;
+	background: $sless-blue;
+	font-weight: normal;
+	color: #fff;
+}
+
+.ui-widget-header {
+	border: 0;
+	border-radius: 0;
+	background: none;
+	color: $sless-text;
+	font-weight: bold;
+}
+
+.ui-tabs.ui-tabs-panel {
+	background-color: $sless-blue;
+}
+
+.ui-widget.ui-widget-content {
+	border: 0;
+}
+
+pre {
+	display: block;
+	padding: .95rem;
+	margin: 0 0 1rem;
+	font-size: 1.4rem;
+	line-height: 1.42857143;
+	color: #fffc;
+	word-break: break-all;
+	word-wrap: break-word;
+	background-color: $sless-dark-blue;
+	border: 0;
+	border-radius: .4rem;
+}
+
+.ui-tabs .ui-tabs-panel {
+	display: block;
+	border-width: 0;
+	padding: 2rem 2rem 2rem 0;
+	background: $sless-light-blue;
+}
+
+.ui-tabs .ui-tabs-nav li {
+	margin: 0.1rem .8rem 0 0;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+	background: #fff;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+	border: .3rem solid $sless-light-blue;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+	background-color: $sless-light-blue;
+	color: $sless-blue;
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+	color: $sless-blue;
+}
+
+.ui-tabs .ui-tabs-nav {
+	padding: 0;
+}
+
+.ui-tabs a:focus {
+	outline: none;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	font-family: $sless-font-secondary;
+
+}
+
+// ***********************
+// Copy to Clipboard
+// ***********************
+
+.copy-icon {
+	position: relative;
+	width: 1.5rem;
+	height: 2rem;
+	background: url("/img/clipboard.svg");
+	background-repeat: no-repeat;
+	background-position: center;
+	border: none;
+	cursor: pointer;
+	float: right;
+	&:hover {
+		background: url("/img/clipboard-hover.svg");
+		background-repeat: no-repeat;
+	}
+	&:active {
+		background: url("/img/clipboard-focus.svg");
+		background-repeat: no-repeat;
+	}
+}
+.copy-icon-hover {
+  position: relative;
+	width: 1.5rem;
+	height: 2rem;
+  background: url("/img/clipboard-hover.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+	float: right;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 12rem;
+  background-color: $sless-blue;
+  font-family: $sless-font-primary;
+  font-size: 1.2rem;
+  color: #fff;
+  text-align: center;
+  padding: .5rem 0;
+  border-radius: .6rem;
+  position: absolute;
+  right: -5.2rem;
+  z-index: 1;
+  margin-top: 3rem;
+}
+
+.hover-button:hover .tooltip-text {
+  visibility: visible;
+}
+figure.highlight {
+	background: none;
+}
+.highlight pre button {
+  visibility: visible;
+}
+
+.arrow_box:after {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(0, 0, 0, 0);
+  border-bottom-color: $sless-blue;
+  border-width: 1rem;
+  margin-left: -1rem;
+}
+
+
+// ***********************
+// CTA banner
+// ***********************
+.cta-banner-wrapper {
+	padding: 2rem 0;
+	background-color: #4d8fcc;
+}
+.cta-banner {
+	background-color: #4d8fcc;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	line-height: 3rem;
+	margin-bottom: 0;
+	padding: 1rem 4rem;
+	text-align: center;
+	p {
+		color: white;
+		font-size: 2rem;
+		font-weight: normal;
+	}
+	a {
+		color: lighten($sless-blue, 30);
+		font-weight: 600;
+	}
+}
+
+// ***********************
+// 404 page
+// ***********************
+.four-o-four-wrapper {
+	text-align: center;
+}
+.four-o-four-container {
+	background-image: url("/img/secretless_dash_pattern_blue_05.svg");
+	margin-bottom: 4rem;
+	padding: 8rem;
+}
+.four-o-four-img {
+	display: flex;
+	justify-content: center;
+	padding: 5rem;
+	img {
+		width: 37rem;
+		height: 15rem;
+	}
+}

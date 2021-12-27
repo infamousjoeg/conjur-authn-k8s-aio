@@ -1,0 +1,52 @@
+main:
+  - title: Documentation
+    url: https://docs.secretless.io
+    target: target="_blank" rel="noopener noreferrer"
+    section: /docs/
+  - title: Tutorial
+    url: /tutorials/kubernetes/kubernetes-tutorial-base.html
+  - title: Community
+    url: /community.html
+  - title: Blog
+    url: /blog.html
+  - title: GitHub
+    url: https://github.com/cyberark/secretless-broker
+    class: gh
+    target: target="_blank" rel="noopener noreferrer"
+
+footer-docs:
+  - title: Why Secretless?
+    url: https://docs.secretless.io/Latest/en/Content/Overview/scl_secretless_overview.htm#WhySecretless
+    target: target="_blank" rel="noopener noreferrer"
+  - title: Key Terms
+    url: https://docs.secretless.io/Latest/en/Content/Overview/scl_key_terms.htm
+    target: target="_blank" rel="noopener noreferrer"
+  - title: Fundamentals
+    url: https://docs.secretless.io/Latest/en/Content/Overview/scl_how_it_works.htm
+    target: target="_blank" rel="noopener noreferrer"
+  # - title: Plugin Reference
+  #   url: https://secretless.io/generated/pkg_secretless_plugin_v1.html
+  #   target: target="_blank" rel="noopener noreferrer"
+
+footer-resources:
+  - title: Tutorial
+    url: /tutorials/kubernetes/kubernetes-tutorial-base.html
+  - title: Community
+    url: /community.html
+  - title: Blog
+    url: /blog.html
+  - title: FAQ
+    url: https://docs.secretless.io/Latest/en/Content/FAQ/faq.htm
+    target: target="_blank" rel="noopener noreferrer"
+
+tutorials-k8s:
+  - title: Before We Begin
+    url: /tutorials/kubernetes/kubernetes-tutorial-base.html
+  - title: Overview
+    url: /tutorials/kubernetes/overview.html
+  - title: Steps for Security Admin
+    url: /tutorials/kubernetes/sec-admin.html
+  - title: Steps for Application Developer
+    url: /tutorials/kubernetes/app-dev.html
+  - title: Appendix - Secretless Deployment Manifest Explained
+    url: /tutorials/kubernetes/appendix.html

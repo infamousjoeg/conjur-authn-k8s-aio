@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+
+# Run the tests
+go test -v -count 1 ./...

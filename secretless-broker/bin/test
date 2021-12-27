@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+CURRENT_DIR=$(dirname "$0")
+
+test_dirs=(unit integration demo)
+
+for test_dir in "${test_dirs[@]}"; do
+  echo "*********************"
+  echo "Running ${test_dir} tests..."
+  "$CURRENT_DIR"/test_"${test_dir}"
+done
+
+echo "Done"

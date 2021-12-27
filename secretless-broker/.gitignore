@@ -1,0 +1,53 @@
+# Miscellaneous files
+.DS_Store
+.env
+.idea
+.jekyll-cache/
+.keep
+.vscode/
+
+bench.*
+debug
+debug.*
+dist
+gosec.output
+run
+tmp
+vendor
+
+/demo/godoc
+/secretless
+/showpw
+
+*.bak
+*.retry
+*.so
+*.sw[po]
+
+# Demo temp files
+demo/**/proxy_tls
+demo/**/myapp
+!demo/**/src/myapp
+
+# Test temp files
+c.out
+coverage.xml
+results.json
+test/junit.*
+test/**/junit.*
+test/*.xml
+test/plugin/out/
+
+# We don't use dep anymore
+Gopkg.*
+
+# Ignore auto-generated temporary files
+github.com/cyberark/
+
+# Image scan files
+scan_results-*.json
+scan_results-*.xml
+
+# Temporary directories to store the CyberArk proxy CA certificate
+build_ca_certificate/
+bin/juxtaposer/build_ca_certificate

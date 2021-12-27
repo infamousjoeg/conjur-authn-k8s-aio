@@ -1,0 +1,11 @@
+# Ignore the generated site
+_site/
+
+# Ignore the generated html pages
+generated/*.html
+
+# Ignore the sass cache
+.sass-cache
+
+# Ignore the auto-generated benchmark file
+_includes/auto_benchmarks.html

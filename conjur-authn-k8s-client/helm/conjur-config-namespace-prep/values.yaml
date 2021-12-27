@@ -1,0 +1,43 @@
+authnK8s:
+  # These are required values
+  # goldenConfigMap: 
+  # namespace: 
+
+authnRoleBinding:
+  create: true
+  name: conjur-rolebinding
+
+conjurConfigMap:
+  create: true
+  name: conjur-connect
+
+test:
+  mock:
+    enable: false
+    conjurAccount: "mock-conjur-account"
+    conjurApplianceUrl: "https://mock.example.com"
+    conjurSslCertificate: "-----BEGIN CERTIFICATE-----\n
+MIIC/ThisIsAMockThisIsOnlyAMock==\n
+-----END CERTIFICATE-----\n"
+    authnK8sAuthenticatorID: "mock-authenticator-id"
+    authnK8sClusterRole: "mock-clusterrole"
+    authnK8sServiceAccount: "mock-serviceaccount"
+
+  # The following chart values are for configuring Helm test
+
+  # 'colorize' determines if test output should include color escape sequences
+  colorize: true
+  authentication:
+    # 'enable' indicates whether validation tests should include an attempt
+    # to authenticate with a Conjur instance using the Golden ConfigMap
+    # contents and a special "authentication-only" (no secrets access)
+    # validator Conjur host ID.
+    enable: false
+    # If Conjur authentication validation testing is enabled, then
+    # 'authnLogin' must be set to a Conjur host ID that has been
+    # pre-configured for basic authentication (i.e. no access to secrets
+    # is required) in Conjur security policy. Example:
+    #    authnLogin: host/conjur/authn-k8s/my-authenticator-id/validator
+    authnLogin:
+    # 'debug' enables authenticator sidecar debug logs during testing
+    debug: true

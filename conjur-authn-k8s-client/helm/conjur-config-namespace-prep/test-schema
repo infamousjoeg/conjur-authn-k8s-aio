@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# This script tests the restrictions on chart values
+# as defined in the 'values.schema.json' file.
+#
+# Requirements:
+#   - Helm v3.5.3 or later
+
+cd "$(dirname "$0")"
+
+source ../common/utils.sh
+
+# Global test state
+num_passed=0
+num_failed=0
+test_failed=false
+
+function authenticator_variable_test() {
+    helm lint . --strict \
+        --set "authnK8s.goldenConfigMap=conjur-configmap"\
+        --set "authnK8s.namespace=golden"
+}
+
+function authenticator_missing_configmap_test() {
+    helm lint . --strict \
+        --set "authnK8s.namespace=golden"
+}
+
+function authenticator_missing_namespace_test() {
+    helm lint . --strict \
+        --set "authnK8s.goldenConfigMap=conjur-configmap"
+}
+
+function main() {
+    banner $BOLD "Running Helm schema tests for chart \"conjur-config-namespace-prep\""
+    check_helm_version
+
+    announce "Basic test with both the ConfigMap and Namespace supplied "
+    authenticator_variable_test
+    update_results "$?" 
+
+    announce "ConfigMap is not set"
+    authenticator_missing_configmap_test 
+    update_results "$?" "$EXPECT_FAILURE"
+
+    announce "Namespace is not set"
+    authenticator_missing_namespace_test
+    update_results "$?" "$EXPECT_FAILURE"
+
+    display_final_results
+    if [ "$num_failed" -ne 0 ]; then
+        exit 1
+    fi
+}
+
+main "$@"
